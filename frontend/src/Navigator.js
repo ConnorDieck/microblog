@@ -13,7 +13,7 @@ const Navigator = () => {
 			<Route path="/" element={<Home />} />
 			<Route path="/posts/:postId" element={<Post />} />
 			<Route path="/posts/new" element={<PostForm editMode={false} />} />
-			<Route path="/posts/edit/:postId" element={<PostForm editMode={true} />} />
+			<Route path="/posts/edit/:id" element={<PostForm editMode={true} />} />
 		</Routes>
 	);
 };

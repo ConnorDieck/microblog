@@ -15,12 +15,12 @@ const PostForm = ({ editMode }) => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	let postDetails = null;
-	let { postId } = useParams();
+	let { id } = useParams();
 
 	// Fetch post details if editing post
 	if (editMode) {
 		let postsCopy = { ...posts };
-		postDetails = postsCopy[postId];
+		postDetails = postsCopy[id];
 	}
 
 	const [ formData, setFormData ] = useState(editMode ? postDetails : INITIAL_STATE);
@@ -36,11 +36,9 @@ const PostForm = ({ editMode }) => {
 	const handleSubmit = evt => {
 		evt.preventDefault();
 		if (!editMode) {
-			// addPost(formData);
 			dispatch(sendPostToAPI(formData));
 		} else {
-			// editPost(formData);
-			dispatch(updatePostInAPI(formData, postId));
+			dispatch(updatePostInAPI(formData));
 		}
 		navigate("/");
 	};

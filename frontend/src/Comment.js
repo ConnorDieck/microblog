@@ -1,14 +1,14 @@
 import React from "react";
-import { useDispatch } from "react-redux";
-import { deleteComment } from "./actions/posts";
 
-const Comment = ({ text, postId, id }) => {
-	const dispatch = useDispatch();
+const Comment = ({ text, deleteComment, id }) => {
+	const handleDelete = evt => {
+		deleteComment(id);
+	};
 
 	return (
 		<div>
 			<p>{text}</p>
-			<button onClick={() => dispatch(deleteComment(postId, id))}>X</button>
+			<button onClick={handleDelete}>X</button>
 		</div>
 	);
 };

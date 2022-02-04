@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { addComment } from "./actions/posts";
+import { sendCommentToAPI } from "./actions/posts";
 
 const INITIAL_STATE = {
 	text : ""
@@ -21,7 +21,8 @@ const NewCommentForm = ({ postId }) => {
 
 	const handleSubmit = evt => {
 		evt.preventDefault();
-		dispatch(addComment(postId, formData));
+		console.log(formData);
+		dispatch(sendCommentToAPI(postId, formData));
 		setFormData(INITIAL_STATE);
 	};
 

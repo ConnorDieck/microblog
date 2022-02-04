@@ -1,7 +1,8 @@
-import { ADD_POST, ADD_COMMENT, EDIT_POST, DELETE_COMMENT, DELETE_POST, FETCH_POST } from "../actions/types";
+import { ADD_POST, ADD_COMMENT, EDIT_POST, DELETE_COMMENT, DELETE_POST, FETCH_POST, VOTE } from "../actions/types";
 
 const rootReducer = (state = {}, action) => {
 	let postsCopy = {};
+
 	switch (action.type) {
 		case FETCH_POST:
 			// Adds a post from API to state
@@ -14,12 +15,11 @@ const rootReducer = (state = {}, action) => {
 			};
 		case EDIT_POST:
 			// Edits existing post in state
-			postsCopy = { ...state.posts };
+			postsCopy = { ...state };
 			postsCopy[action.payload.id] = action.payload.post;
 
 			return {
-				...state,
-				postsCopy
+				...postsCopy
 			};
 		case DELETE_POST:
 			// Deletes given post from state
@@ -27,30 +27,40 @@ const rootReducer = (state = {}, action) => {
 			delete postsCopy[action.payload];
 
 			return {
-				...state,
-				posts : postsCopy
+				...postsCopy
 			};
 		case ADD_COMMENT:
 			// Adds new comment to existing post
-			// let newComment = { ...action.payload.comment, id: uuid() };
-			// postsCopy = { ...state.posts };
-			// postsCopy[action.payload.id].comments = [ ...postsCopy[action.payload.id].comments, newComment ];
+			let newComment = { ...action.payload.comment };
+			postsCopy = { ...state };
+			postsCopy[action.payload.id].comments = [ ...postsCopy[action.payload.id].comments, newComment ];
 
 			return {
-				...state,
-				posts : postsCopy
+				...postsCopy
 			};
 		case DELETE_COMMENT:
 			// Deletes comment from given post in state
-			postsCopy = { ...state.posts };
+			postsCopy = { ...state };
 			postsCopy[action.payload.postId].comments = postsCopy[action.payload.postId].comments.filter(
 				comment => comment.id !== action.payload.commentId
 			);
 
 			return {
-				...state,
-				posts : postsCopy
+				...postsCopy
 			};
+		case VOTE:
+			// Updates number of votes in state and API
+			let post = state[action.payload.postId];
+
+			// If post doesn't already exist in state, don't update the store
+			if (post) {
+				return {
+					...state,
+					[action.payload.postId]: { ...post, votes: action.payload.votes }
+				};
+			} else {
+				return state;
+			}
 		default:
 			return state;
 	}

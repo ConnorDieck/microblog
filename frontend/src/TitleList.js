@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchTitlesFromAPI } from "./actions/titles";
+import { sendVoteToAPI } from "./actions/posts";
 import { Link } from "react-router-dom";
 
 const TitleList = () => {
@@ -8,8 +9,9 @@ const TitleList = () => {
 	const dispatch = useDispatch();
 	const [ isLoading, setIsLoading ] = useState(true);
 
+	// Get titles from API and add to state
 	useEffect(
-		() => {
+		function() {
 			async function fetchTitles() {
 				await dispatch(fetchTitlesFromAPI());
 				setIsLoading(false);
@@ -19,8 +21,12 @@ const TitleList = () => {
 				fetchTitles();
 			}
 		},
-		[ dispatch, isLoading, titles ]
+		[ dispatch, isLoading ]
 	);
+
+	function castVote(postId, direction) {
+		dispatch(sendVoteToAPI(postId, direction));
+	}
 
 	if (isLoading) return <b>Loading...</b>;
 
@@ -34,6 +40,8 @@ const TitleList = () => {
 				<Link to={`/posts/${title.id}`}>{title.title}</Link>
 				<br />
 				<p>{title.description}</p>
+				<button onClick={evt => castVote(title.id, "up")}>+1</button>
+				<button onClick={evt => castVote(title.id, "down")}>-1</button>
 			</div>
 		);
 	});

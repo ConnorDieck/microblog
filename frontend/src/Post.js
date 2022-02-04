@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { deletePost } from "./actions/posts";
+import { deleteCommentFromAPI, deletePostFromAPI } from "./actions/posts";
 import { fetchPostFromAPI } from "./actions/posts";
 
 import PostView from "./PostView";
-import Comment from "./Comment";
+import CommentList from "./CommentList";
 import NewCommentForm from "./NewCommentForm";
 
 const Post = () => {
-	const { postId } = useParams();
+	const postId = Number(useParams().postId);
 	const post = useSelector(store => store.posts[postId]);
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
@@ -27,11 +27,19 @@ const Post = () => {
 		[ dispatch, post, postId ]
 	);
 
+	// Deletes post from API and state
 	function remove(id) {
-		dispatch(deletePost(id));
+		dispatch(deletePostFromAPI(id));
 		navigate("/");
 	}
 
+	// Deletes comment from API and state
+	function deleteComment(commentId) {
+		console.log(postId);
+		dispatch(deleteCommentFromAPI(postId, commentId));
+	}
+
+	// If no post, render Loading message
 	if (!post) return <b>Loading...</b>;
 
 	return (
@@ -41,9 +49,7 @@ const Post = () => {
 				<button onClick={() => navigate(`/posts/edit/${postId}`)}>Edit</button>
 				<button onClick={() => remove(postId)}>Delete</button>
 				<h5>Comments</h5>
-				{post.comments.map(comment => (
-					<Comment text={comment.text} key={comment.id} id={comment.id} postId={postId} />
-				))}
+				<CommentList comments={post.comments} deleteComment={deleteComment} postId={postId} />
 				<NewCommentForm postId={postId} />
 			</div>
 		</div>
